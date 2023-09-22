@@ -6,8 +6,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './src/Home';
 import SearchScreen from './src/Search';
 import NavigationScreen from './src/Navigation';
-import SettingsScreen from './src/Settings';
-
 import HomeIcon from './assets/home.svg';
 import CityIcon from './assets/villes.svg';
 import FranceIcon from './assets/france.svg';
@@ -28,19 +26,14 @@ function App() {
           }}
         />
         <Tab.Screen
-          name="Navigation"
-          component={NavigationScreen}
-          options={{ tabBarIcon: ({ color, size }) => <CityIcon /> }}
-        />
-        <Tab.Screen
           name="Rechercher"
           component={SearchScreen}
           options={{ tabBarIcon: ({ color, size }) => <FranceIcon /> }}
         />
         <Tab.Screen
-          name="Options"
-          component={SettingsScreen}
-          options={{ tabBarIcon: ({ color, size }) => <SettingIcon /> }}
+          name="Villes"
+          component={NavigationScreen}
+          options={{ tabBarIcon: ({ color, size }) => <CityIcon /> }}
         />
       </Tab.Navigator>
     </NavigationContainer>
