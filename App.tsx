@@ -1,17 +1,24 @@
-// In App.js in a new project
-
-import * as React from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './src/Home';
 import SearchScreen from './src/Search';
 import NavigationScreen from './src/Navigation';
 import HomeIcon from './assets/home.svg';
-import CityIcon from './assets/villes.svg';
 import FranceIcon from './assets/france.svg';
-import SettingIcon from './assets/settings.svg';
 
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+function SearchStack() {
+  return (
+    <Stack.Navigator initialRouteName="Search">
+      <Stack.Screen name="Rechercher une ville" component={SearchScreen} />
+      <Stack.Screen name="Villes" component={NavigationScreen} />
+    </Stack.Navigator>
+  );
+}
 
 function App() {
   return (
@@ -21,19 +28,13 @@ function App() {
           name="Home"
           component={HomeScreen}
           options={{
-            tabBarBadge: 3,
             tabBarIcon: ({ color, size }) => <HomeIcon />,
           }}
         />
         <Tab.Screen
-          name="Rechercher"
-          component={SearchScreen}
+          name="Recherche"
+          component={SearchStack}
           options={{ tabBarIcon: ({ color, size }) => <FranceIcon /> }}
-        />
-        <Tab.Screen
-          name="Villes"
-          component={NavigationScreen}
-          options={{ tabBarIcon: ({ color, size }) => <CityIcon /> }}
         />
       </Tab.Navigator>
     </NavigationContainer>

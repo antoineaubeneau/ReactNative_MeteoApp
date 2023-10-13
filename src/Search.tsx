@@ -1,39 +1,62 @@
-import { Button, View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Button,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import React, { useState, useEffect } from 'react';
+
+interface CityItem {
+  nom: string;
+  code: string;
+}
 
 export default function SearchScreen({ navigation }: any) {
-  const [city, setCity] = useState('');
-  const [cities, setCities] = useState([]);
+  const [city, setCity] = useState<string>('');
+  const [cities, setCities] = useState<CityItem[]>([]);
   const [weatherData, setWeatherData] = useState(null);
 
-  useEffect(() => {
-    if (city) {
-      searchCity();
-    }
-  }, [city]);
-
-  function searchCity() {
+  const searchCity = useCallback(() => {
     if (!city) {
       setCities([]);
       return;
     }
 
     fetch(
-      `https://geo.api.gouv.fr/communes?nom=${city}&fields=departement&boost=population&limit=5`,
+      `https://geo.api.gouv.fr/communes?nom=${city}&fields=lon&boost=lon&limit=5`,
     )
       .then(response => response.json())
       .then(data => {
-        if (data && Array.isArray(data)) {
+        if (Array.isArray(data)) {
           setCities(data);
         } else {
           setCities([]);
         }
       })
-      .catch(error => {
+      .catch(() => {
         setCities([]);
       });
-  }
+  }, [city]);
+
+  useEffect(() => {
+    if (city) {
+      searchCity();
+    }
+  }, [city, searchCity]);
+
+  const renderCity = ({ item }: { item: CityItem }) => (
+    <TouchableOpacity
+      onPress={() => {
+        setCity(item.nom);
+        navigation.navigate('Villes', { cityName: item.nom });
+      }}>
+      <Text style={styles.citySuggestion}>{item.nom}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <LinearGradient colors={['#4c669f', '#3b5998']} style={styles.container}>
@@ -44,6 +67,13 @@ export default function SearchScreen({ navigation }: any) {
           value={city}
           onChangeText={setCity}
         />
+        {city && (
+          <FlatList
+            data={cities}
+            renderItem={renderCity}
+            keyExtractor={item => item.code}
+          />
+        )}
         <Button title="Rechercher la ville" onPress={searchCity} />
         {weatherData && <Text>{JSON.stringify(weatherData)}</Text>}
       </View>
@@ -73,5 +103,15 @@ const styles = StyleSheet.create({
   whiteText: {
     color: '#FFF',
     marginBottom: 10,
+  },
+  cityContainer: {
+    padding: 10,
+  },
+  cityText: {
+    color: '#FFF',
+  },
+  citySuggestion: {
+    padding: 10,
+    color: '#FFF',
   },
 });
